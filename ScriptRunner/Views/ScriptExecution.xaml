@@ -1,0 +1,48 @@
+﻿<UserControl x:Class="ScriptRunner.Views.ScriptExecution"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:ScriptRunner.Views"
+             xmlns:cv="clr-namespace:ScriptRunner.Converters"
+             xmlns:Controls="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
+             xmlns:metro="clr-namespace:MahApps.Metro;assembly=MahApps.Metro"
+             mc:Ignorable="d" 
+             d:DesignHeight="300" d:DesignWidth="300">
+    <Grid>
+        <Grid.Resources>
+            <cv:DataTypeConverter x:Key="DataTypeConverter"/>
+        </Grid.Resources>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="2*"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+            <ListView x:Name="lv_Scripts" ItemsSource="{Binding}">
+                <ListView.View>
+                    <GridView>
+                        <GridViewColumn Header="Case Id"  DisplayMemberBinding="{Binding Id}"/>
+                        <GridViewColumn Header="Script Name" Width="150" DisplayMemberBinding="{Binding Name}"/>
+                    </GridView>
+                </ListView.View>
+            </ListView>
+            <GridSplitter Grid.Column="1" Width="3" HorizontalAlignment="Stretch" ResizeDirection="Columns"/>
+            <ListView x:Name="lv_Steps" Grid.Column="2" ItemsSource="{Binding ElementName=lv_Scripts,Path=SelectedItem.Steps}">
+                <ListView.View>
+                    <GridView>
+                        <GridViewColumn Header="Step Id" DisplayMemberBinding="{Binding Id}"/>
+                        <GridViewColumn Header="Step Name" DisplayMemberBinding="{Binding Name}"/>
+                    </GridView>
+                </ListView.View>
+            </ListView>
+        </Grid>
+        <GridSplitter Grid.Row="1"  Height="3" HorizontalAlignment="Stretch"/>
+        <DataGrid Grid.Row="2" ItemsSource="{Binding ElementName=lv_Scripts,Path=SelectedItem,Converter={StaticResource DataTypeConverter}}"></DataGrid>
+    </Grid>
+</UserControl>
