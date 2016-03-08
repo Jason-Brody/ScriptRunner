@@ -63,7 +63,7 @@ namespace ScriptRunner.ViewModels
                 AddId();
                 var script = new Script(s);
                 script.Id = Count;
-                _scripts.Add(new Script(s));
+                _scripts.Add(script);
             }
 
             AppDomain.Unload(domain);

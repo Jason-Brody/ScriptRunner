@@ -20,7 +20,6 @@ namespace ScriptRunner
             _assemblyList = new List<Assembly>();
             _scripts = new List<ScriptMarshal>();
             AppDomain.CurrentDomain.AssemblyResolve += CurrentDomain_AssemblyResolve;
-
         }
 
         private Assembly CurrentDomain_AssemblyResolve(object sender, ResolveEventArgs args)
@@ -47,7 +46,6 @@ namespace ScriptRunner
                 try
                 {
                     var asmName = AssemblyName.GetAssemblyName(f.FullName);
-
                     var asm = Assembly.Load(asmName);
                     _assemblyList.Add(asm);
                     getCaseInfo(asm);
@@ -69,16 +67,16 @@ namespace ScriptRunner
                 {
                     if (t.GetConstructor(Type.EmptyTypes) != null)
                     {
-                        getScripts(t, myInterface);
+                        
+                        getScripts(t, myInterface,asm.Location);
                     }
-
-
                 }
             }
         }
 
-        private void getScripts(Type t, Type interfaceType)
+        private void getScripts(Type t, Type interfaceType,string location)
         {
+            
             ScriptMarshal s = null;
             var sattr = t.GetCustomAttribute<ScriptAttribute>(true);
             if (sattr != null)
@@ -89,6 +87,8 @@ namespace ScriptRunner
                 s.Name = sattr.Name;
                 s.Description = sattr.Description;
                 s.HelpLink = sattr.HelpLink;
+                s.Location = location;
+                s.TargetClass = t.FullName;
 
                 foreach (var m in t.GetMethods())
                 {
@@ -102,11 +102,8 @@ namespace ScriptRunner
                         s.Steps.Add(step);
                     }
                 }
-
                 var dataType = interfaceType.GetGenericArguments().First();
                 s.Types = new List<InputDataMarshal>();
-
-
                 s.Types.AddRange(getDataTypes(dataType));
                 _scripts.Add(s);
 
@@ -118,7 +115,8 @@ namespace ScriptRunner
             List<InputDataMarshal> types = new List<InputDataMarshal>();
             foreach (var prop in dataType.GetProperties().Where(p => p.PropertyType == typeof(string) || p.PropertyType.IsPrimitive))
             {
-                types.Add(new InputDataMarshal() { Name = prop.Name, Type = prop.PropertyType.FullName });
+                var paraAttr = prop.GetCustomAttribute<ParameterAttribute>();
+                types.Add(new InputDataMarshal() { Name = prop.Name, Type = prop.PropertyType.FullName,IsOutput = paraAttr?.Direction == Direction.Output? true :false });
             }
             return types;
 

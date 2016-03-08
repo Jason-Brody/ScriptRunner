@@ -23,6 +23,7 @@ using Microsoft.AspNet.SignalR;
 using ScriptRunner.Interface;
 using System.Diagnostics;
 using ScriptRunner.Models;
+using Newtonsoft.Json;
 
 namespace ScriptRunner
 {
@@ -37,13 +38,15 @@ namespace ScriptRunner
         {
             InitializeComponent();
             startServer();
+            
         }
 
         
         private void startServer()
         {
             StartOptions options = new StartOptions();
-            port = TcpPort.FreeTcpPort();
+            port = 5000;
+                //TcpPort.FreeTcpPort();
             string server = $"http://localhost:{port}";
             options.Urls.Add($"http://127.0.0.1:{port}");
             options.Urls.Add(server);
@@ -55,23 +58,32 @@ namespace ScriptRunner
         private void btn_Temp_Click(object sender, RoutedEventArgs e)
         {
             ProcessStartInfo pi = new ProcessStartInfo();
-            pi.FileName = @"E:\GitHub\ScriptRunner\ScriptRunner\SignalRClientTest\bin\Debug\SignalRClientTest.exe";
+            pi.FileName = @"C:\Work\Github\ScriptRunner\ScriptRobot\bin\Debug\ScriptRobot.exe";
 
             ScriptTaskInfo sti = new ScriptTaskInfo()
             {
-                Location = @"E:\GitHub\GLMEC\TestScript\bin\Debug\TestScript.dll",
-                ScriptType = "TestScript.Case6.Case6_Workflow",
+                Location = ScriptRunnerManager.CurrentScript.Location,
+                ScriptType = ScriptRunnerManager.CurrentScript.TargetClass,
+                
             };
-            ScriptTask st = new ScriptTask() { Id = Guid.NewGuid().ToString(), TaskData = sti };
 
-            pi.Arguments = $"{port} {st.Id}";
+            ScriptTask st = new ScriptTask() { ClientId = "7860", TaskData = sti };
 
-            Task.Run(() => { Process.Start(pi); });
+            pi.Arguments = $"{port} {st.ClientId}";
 
-            ScriptRunnerManager.ScriptTasks.Add(st);
+            
+            //Process.Start(pi);
+            ScriptRunnerManager.ScriptTasks.Add(st); 
+
+            
             //IHubContext<IScriptClient> hubContext = GlobalHost.ConnectionManager.GetHubContext<IScriptClient>("ScriptHub");
             
             
+        }
+
+        private void Button_Click(object sender, RoutedEventArgs e)
+        {
+            fo_Setting.IsOpen = !fo_Setting.IsOpen;
         }
     }
 }

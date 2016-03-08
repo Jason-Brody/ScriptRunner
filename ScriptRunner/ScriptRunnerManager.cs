@@ -23,5 +23,7 @@ namespace ScriptRunner
         public static ObservableCollection<ScriptFolder> ScriptFolders = null;
 
         public static List<ScriptTask> ScriptTasks = null;
+
+        public static Script CurrentScript { get; set; }
     }
 }

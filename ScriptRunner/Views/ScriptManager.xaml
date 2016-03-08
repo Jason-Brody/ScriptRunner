@@ -4,11 +4,15 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:ScriptRunner.Views"
+             xmlns:cv="clr-namespace:ScriptRunner.Converters"
               xmlns:Controls="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
              xmlns:metro="clr-namespace:MahApps.Metro;assembly=MahApps.Metro"
              mc:Ignorable="d" 
              d:DesignHeight="300" d:DesignWidth="300">
     <Grid>
+        <Grid.Resources>
+            <cv:ParameterDirectionConverter x:Key="ParameterDirectionConverter"/>
+        </Grid.Resources>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="*" />
             <ColumnDefinition Width="Auto"/>
@@ -60,6 +64,7 @@
                             <GridView.Columns>
                                 <GridViewColumn Header="Id" Width="50" DisplayMemberBinding="{Binding Id}"/>
                                 <GridViewColumn Header="Name" Width="200" DisplayMemberBinding="{Binding Name}"/>
+                                
                             </GridView.Columns>
                         </GridView>
                     </ListView.View>
@@ -72,6 +77,7 @@
                             <GridView.Columns>
                                 <GridViewColumn Header="Name" Width="150" DisplayMemberBinding="{Binding Name}"/>
                                 <GridViewColumn Header="Type" Width="150" DisplayMemberBinding="{Binding Type}"/>
+                                <GridViewColumn Header="Direction" Width="100" DisplayMemberBinding="{Binding IsOutput,Converter={StaticResource ParameterDirectionConverter}}"/>
                             </GridView.Columns>
                         </GridView>
                     </ListView.View>

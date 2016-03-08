@@ -11,5 +11,7 @@ namespace ScriptRunner.Interface
         void Connect();
 
         void RunScript(ScriptTaskInfo info);
+
+        void Complete();
     }
 }

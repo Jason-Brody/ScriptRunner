@@ -35,7 +35,7 @@ namespace ScriptRunner.Views
             //var result = await this.ShowInputAsync("Folder Info", "Please type folder address here");
             //if(result!=null)
             {
-                var result = @"E:\GitHub\GLMEC\TestScript\bin\Debug";
+                var result = @"C:\Work\Github\ScriptRunner\ScriptSample\bin\Debug";
 
                 if (ScriptRunnerManager.ScriptFolders.Where(f => f.Name.ToLower().Trim() == result.ToLower().Trim()).FirstOrDefault() != null)
                 {
@@ -56,7 +56,7 @@ namespace ScriptRunner.Views
             {
                 foreach(var subItem in item.Scripts)
                 {
-                    if(!ScriptRunnerManager.Scripts.Any(s=>s.Id == subItem.Id))
+                    if(!ScriptRunnerManager.Scripts.Any(s=>s.Id == subItem.Id) && subItem.IsChoose)
                     {
                         ScriptRunnerManager.Scripts.Add(subItem);
                     }

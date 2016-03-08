@@ -6,8 +6,13 @@ using System.Threading.Tasks;
 
 namespace ScriptRunner.Interface
 {
-    public interface IScriptRunner<T> where T :class,new()
+    public interface IScriptRunner<T>  where T :class,new()
     {
         void SetInputData(T data, IProgress<ProcessInfo> MyProgress);
+    }
+
+    public interface IScriptData<T>:IScriptRunner<T> where T :class,new()
+    {
+        T GetSampleData();
     }
 }

@@ -9,7 +9,7 @@ namespace ScriptRunner.Models
 {
     public class ScriptTask
     {
-        public string Id { get; set; }
+        public string ClientId { get; set; }
 
         public ScriptTaskInfo TaskData{ get; set; }
     }

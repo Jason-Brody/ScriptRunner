@@ -105,6 +105,7 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="Converters\DataTypeConverter.cs" />
+    <Compile Include="Converters\ParameterDirectionConverter.cs" />
     <Compile Include="Models\ScriptTask.cs" />
     <Compile Include="ScriptHub.cs" />
     <Compile Include="ScriptRunnerManager.cs" />

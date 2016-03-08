@@ -5,7 +5,6 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using ScriptRunner.Interface;
-using TestScript.Case6;
 using Newtonsoft.Json;
 using System.Net.Sockets;
 using System.Net;
@@ -17,45 +16,33 @@ namespace SignalRClientTest
     {
         static void Main(string[] args)
         {
+            JSONObjTest t = new JSONObjTest();
+            t.Id = "1";
+            t.Name = "Test";
+            t.Items = new List<Item>()
+            {
+                new Item() {Id2 = 2,Name2="T2" },
+                new Item() {Id2 = 3,Name2="T3" }
+            };
+            t.Data = new System.Data.DataTable();
+            t.Data.Columns.Add("Id");
+            t.Data.Columns.Add("Name");
 
-            var port = args[0];
-            //System.Diagnostics.ProcessStartInfo pi = new ProcessStartInfo();
-            //pi.FileName = @"E:\GitHub\ScriptRunner\ScriptRunner\ScriptAgent\bin\Debug\ScriptAgent.exe";
-            //pi.Arguments = port.ToString();
-            //Process.Start(pi);
+            var dr = t.Data.NewRow();
+            dr["Id"] = "33";
+            dr["Name"] = "Table1";
+            t.Data.Rows.Add(dr);
+            dr = t.Data.NewRow();
+            dr["Id"] = "44";
+            dr["Name"] = "Table2";
+            t.Data.Rows.Add(dr);
 
-            //var method = typeof(JsonConvert).GetMethods().Where(m => m.IsGenericMethod && m.Name == nameof(JsonConvert.DeserializeObject) && m.GetParameters()[0].ParameterType == typeof(string)).First();
-
-            string _server = $"http://localhost:{port}/signalr";
-            var _connection = new HubConnection(_server, useDefaultUrl: false);
-            var _proxy = _connection.CreateHubProxy("ScriptHub");
-            _proxy.On("Connect", () => { Console.WriteLine("Connected"); });
-            _connection.Start().Wait();
-
-            //RunScript(string Location, string TypeName, string Jsondata, IProgress < ProcessInfo > progress)
-            //Case6DataModel data = new Case6DataModel();
-            //data.UserName = "Zhou Yang";
-            //data.Password = "123456";
-            //data.Client = "100";
-            //data.Address = "www.baidu.com";
-            //data.Language = "EN";
-            //string jsonData = JsonConvert.SerializeObject(data);
-
-            //var t = _proxy.Invoke<Case6DataModel>("RunScript", new object[] { @"E:\GitHub\GLMEC\TestScript\bin\Debug\TestScript.dll", "TestScript.Case6.Case6_Workflow", jsonData });
-            //if (t.Status == TaskStatus.WaitingToRun)
-            //    t.Start();
-            //t.Wait();
-            //Console.WriteLine(t.Result.UserName);
-            Console.ReadLine();
+            var s = JsonConvert.SerializeObject(t);
+            JSONObjTest1 obj = JsonConvert.DeserializeObject<JSONObjTest1>(s);
         }
 
-        static int FreeTcpPort()
-        {
-            TcpListener l = new TcpListener(IPAddress.Loopback, 0);
-            l.Start();
-            int port = ((IPEndPoint)l.LocalEndpoint).Port;
-            l.Stop();
-            return port;
-        }
+
+
+      
     }
 }

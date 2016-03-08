@@ -19,7 +19,7 @@
         Title="MainWindow" Height="350" Width="525">
     <Controls:MetroWindow.RightWindowCommands>
         <Controls:WindowCommands>
-            <Button Content="Settings" />
+            <Button Content="Settings" Click="Button_Click"/>
         </Controls:WindowCommands>
     </Controls:MetroWindow.RightWindowCommands>
 
@@ -56,6 +56,8 @@
             <StatusBarItem x:Name="item_Port">MahApps.Metro DEMO Application</StatusBarItem>
             <Separator Style="{StaticResource MetroStatusBarSeparator}" />
             <Button x:Name="btn_Temp" Click="btn_Temp_Click" Content="Test"/>
+            <Separator Style="{StaticResource MetroStatusBarSeparator}" />
+            <StatusBarItem x:Name="sbi_Current" Content="{Binding Name}"/>
         </StatusBar>
 
         <!--<Grid.RowDefinitions>

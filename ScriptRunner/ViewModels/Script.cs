@@ -16,18 +16,31 @@ namespace ScriptRunner.ViewModels
 
         public Script(ScriptMarshal script)
         {
+            bool test = false;
             this.Name = script.Name;
             this.Description = script.Description;
             this.HelpLink = script.HelpLink;
             this.Steps = new List<Step>();
             this.Types = new List<InputData>();
+            this.Location = script.Location;
+            this.TargetClass = script.TargetClass;
             foreach(var s in script.Steps)
             {
                 this.Steps.Add(new Step(s));
             }
             foreach(var t in script.Types)
             {
+                test = !test;
+                t.IsOutput = test;
                 this.Types.Add(new InputData(t));
+            }
+            this.Datas = new DataTable();
+            foreach (var item in this.Types.OrderBy(s=>s.IsOutput))
+            {
+                DataColumn dc = new DataColumn(item.Name, Type.GetType(item.Type));
+                if (item.IsOutput)
+                    dc.ReadOnly = true;
+                this.Datas.Columns.Add(dc);
             }
         }
 
@@ -41,6 +54,9 @@ namespace ScriptRunner.ViewModels
 
         public string HelpLink { get; set; }
 
+        public string Location { get; set; }
+
+        public string TargetClass { get; set; }
 
         public List<Step> Steps { get; set; }
 
@@ -60,12 +76,13 @@ namespace ScriptRunner.ViewModels
     {
         public string Name { get; set; }
 
-
         public string Description { get; set; }
-
 
         public string HelpLink { get; set; }
 
+        public string Location { get; set; }
+
+        public string TargetClass { get; set; }
 
         public List<StepMarshal> Steps { get; set; }
 

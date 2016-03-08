@@ -14,12 +14,15 @@ namespace ScriptRunner.ViewModels
             this.Name = data.Name;
             this.Type = data.Type;
             this.Value = data.Value;
+            this.IsOutput = data.IsOutput;
         }
         public string Name { get; set; }
 
         public string Type { get; set; }
 
         public object Value { get; set; }
+
+        public bool IsOutput { get; set; }
     }
 
     public class InputDataMarshal:MarshalByRefObject
@@ -29,5 +32,7 @@ namespace ScriptRunner.ViewModels
         public string Type { get; set; }
 
         public object Value { get; set; }
+
+        public bool IsOutput { get; set; }
     }
 }
