@@ -104,16 +104,16 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Compile Include="Converters\DataTypeConverter.cs" />
+    <Compile Include="Converters\BooleanReverseConverter.cs" />
     <Compile Include="Converters\ParameterDirectionConverter.cs" />
-    <Compile Include="Models\ScriptTask.cs" />
+    <Compile Include="Models\Robot.cs" />
     <Compile Include="ScriptHub.cs" />
     <Compile Include="ScriptRunnerManager.cs" />
     <Compile Include="ScriptSpy.cs" />
     <Compile Include="Startup.cs" />
     <Compile Include="Utils.cs" />
-    <Compile Include="ViewModels\InputData.cs" />
-    <Compile Include="ViewModels\ProgressInfo.cs" />
+    <Compile Include="Models\InputData.cs" />
+    <Compile Include="ViewModels\StepProgress.cs" />
     <Compile Include="ViewModels\Script.cs" />
     <Compile Include="ViewModels\ScriptFolder.cs" />
     <Compile Include="ViewModels\Step.cs" />
@@ -189,7 +189,9 @@
   <ItemGroup>
     <Resource Include="Resources\Entypo-license.txt" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Folder Include="Services\" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

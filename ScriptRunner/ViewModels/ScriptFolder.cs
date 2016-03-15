@@ -9,7 +9,7 @@ using System.Windows.Data;
 
 namespace ScriptRunner.ViewModels
 {
-    class ScriptFolder : WPFNotify
+    public class ScriptFolder : WPFNotify
     {
 
         private static object _lockObj = new object();

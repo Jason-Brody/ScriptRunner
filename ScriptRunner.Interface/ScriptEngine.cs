@@ -8,10 +8,28 @@ using System.Threading.Tasks;
 
 namespace ScriptRunner.Interface
 {
-    
 
-    public class ScriptEngine<T> where T :class,new()
+    public delegate void BeforeStepExecutionHandler(StepAttribute step);
+    public delegate void AfterStepExecutionHandler(StepAttribute step);
+
+    public interface IScriptEngine
     {
+        event BeforeStepExecutionHandler BeforeStepExecution;
+        event AfterStepExecutionHandler AfterStepExecution;
+
+        void Run(object data);
+
+        void Run(object data, int StepNum);
+
+        Progress<ProgressInfo> MyProgress { get; }
+    }
+
+    
+    public class ScriptEngine<T>: IScriptEngine where T :class,new()
+    {
+        public event BeforeStepExecutionHandler BeforeStepExecution;
+        public event AfterStepExecutionHandler AfterStepExecution;
+
         private Dictionary<int, Tuple<StepAttribute, MethodInfo>> _stepDic;
 
         private IScriptRunner<T> _obj = null;
@@ -21,29 +39,49 @@ namespace ScriptRunner.Interface
             this._obj = obj;
         }
 
+        public Progress<ProgressInfo> MyProgress { get; } = new Progress<ProgressInfo>();
+
+        private void beforeStepExecution(StepAttribute step)
+        {
+            if (BeforeStepExecution != null)
+                BeforeStepExecution(step);
+        }
+
+        private void afterStepExecution(StepAttribute step)
+        {
+            if (AfterStepExecution != null)
+                AfterStepExecution(step);
+        }
+
         public void Run(T data)
         {
             if (_stepDic == null)
                 addMethod();
 
             
-            _obj.SetInputData(data, new Progress<ProcessInfo>());
+            _obj.SetInputData(data, MyProgress);
 
 
             foreach (var item in _stepDic.OrderBy(o => o.Key))
             {
+                beforeStepExecution(item.Value.Item1);
                 item.Value.Item2.Invoke(_obj, null);
+                afterStepExecution(item.Value.Item1);
             }
         }
+
+
 
         public void Run(T data, int stepNum)
         {
             if (_stepDic == null)
                 addMethod();
 
-            _obj.SetInputData(data, new Progress<ProcessInfo>());
+            _obj.SetInputData(data, new Progress<ProgressInfo>());
 
+            beforeStepExecution(_stepDic[stepNum].Item1);
             _stepDic[stepNum].Item2.Invoke(_obj, null);
+            afterStepExecution(_stepDic[stepNum].Item1);
         }
 
         private void addMethod()
@@ -59,6 +97,16 @@ namespace ScriptRunner.Interface
                     _stepDic.Add(stepAttr.Id, new Tuple<StepAttribute, MethodInfo>(stepAttr, method));
                 }
             }
+        }
+
+        public void Run(object data)
+        {
+            Run(data as T);
+        }
+
+        public void Run(object data, int StepNum)
+        {
+            Run(data as T, StepNum);
         }
     }
 }

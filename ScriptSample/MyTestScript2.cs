@@ -10,6 +10,7 @@ namespace ScriptSample
 {
     public class Script2Data
     {
+        [Parameter(Direction = Direction.Output)]
         public int Id { get; set; }
 
         public string UserName { get; set; }
@@ -20,12 +21,17 @@ namespace ScriptSample
     [Script("Test Case2")]
     public class MyTestScript2 : IScriptRunner<Script2Data>
     {
+        public Script2Data GetResult()
+        {
+            throw new NotImplementedException();
+        }
+
         public Script2Data GetSampleData()
         {
             return new Script2Data() { AccountList = "abc", Id = 1, UserName = "Zhou Yang" };
         }
 
-        public void SetInputData(Script2Data data, IProgress<ProcessInfo> MyProgress)
+        public void SetInputData(Script2Data data, IProgress<ProgressInfo> MyProgress)
         {
 
         }

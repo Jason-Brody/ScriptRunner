@@ -16,7 +16,7 @@
                       WindowTransitionsEnabled="False"
                       WindowStartupLocation="CenterScreen"
                       MinHeight="500" MinWidth="600"
-        Title="MainWindow" Height="350" Width="525">
+        Title="MainWindow" Height="800" Width="1000">
     <Controls:MetroWindow.RightWindowCommands>
         <Controls:WindowCommands>
             <Button Content="Settings" Click="Button_Click"/>

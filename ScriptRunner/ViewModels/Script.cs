@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using ScriptRunner.Interface;
 using System.Collections.ObjectModel;
 using System.Data;
+using ScriptRunner.Models;
 
 namespace ScriptRunner.ViewModels
 {
@@ -16,7 +17,7 @@ namespace ScriptRunner.ViewModels
 
         public Script(ScriptMarshal script)
         {
-            bool test = false;
+            _stepsbyDatas = new Dictionary<int, List<Step>>();
             this.Name = script.Name;
             this.Description = script.Description;
             this.HelpLink = script.HelpLink;
@@ -30,8 +31,6 @@ namespace ScriptRunner.ViewModels
             }
             foreach(var t in script.Types)
             {
-                test = !test;
-                t.IsOutput = test;
                 this.Types.Add(new InputData(t));
             }
             this.Datas = new DataTable();
@@ -44,13 +43,18 @@ namespace ScriptRunner.ViewModels
             }
         }
 
+        
+
+        private Dictionary<int, List<Step>> _stepsbyDatas;
+        public Dictionary<int,List<Step>> StepsByDatas { get { return _stepsbyDatas; } }
+
+        public bool IsSingtonMode { get; set; } = true;
+
         public int Id { get; set; }
 
         public string Name { get; set; }
 
-
         public string Description { get; set; }
-
 
         public string HelpLink { get; set; }
 
@@ -62,6 +66,8 @@ namespace ScriptRunner.ViewModels
 
         public List<InputData> Types { get; set; }
 
+        
+
         private bool _isChoose;
         public bool IsChoose
         {
@@ -69,7 +75,38 @@ namespace ScriptRunner.ViewModels
             set { SetProperty(ref _isChoose, value); }
         }
 
-        public DataTable Datas { get; set; }
+        private DataTable _datas;
+
+        public DataTable Datas
+        {
+            get { return _datas; }
+            set { SetProperty(ref _datas, value); }
+        }
+
+        public void SetData(IDictionary<int,System.Dynamic.ExpandoObject> data)
+        {
+            
+            DataTable newTable = Datas.Copy();
+            foreach(var item in data)
+            {
+                DataRow dr = newTable.Rows[item.Key];
+                foreach(var subItem in item.Value)
+                {
+                    if(newTable.Columns[subItem.Key].ReadOnly)
+                    {
+                        newTable.Columns[subItem.Key].ReadOnly = false;
+                        dr[subItem.Key] = subItem.Value;
+                        newTable.Columns[subItem.Key].ReadOnly =true;
+                    }
+                    else
+                    {
+                        dr[subItem.Key] = subItem.Value;
+                    }
+                }
+            }
+            Datas = newTable;
+        }
+
     }
 
     public class ScriptMarshal : MarshalByRefObject

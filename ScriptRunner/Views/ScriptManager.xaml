@@ -12,6 +12,7 @@
     <Grid>
         <Grid.Resources>
             <cv:ParameterDirectionConverter x:Key="ParameterDirectionConverter"/>
+            <cv:BooleanReverseConverter x:Key="BooleanReverseConverter"/>
         </Grid.Resources>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="*" />
@@ -82,6 +83,16 @@
                         </GridView>
                     </ListView.View>
                 </ListView>
+            </Controls:MetroTabItem>
+            <Controls:MetroTabItem Header="Settings">
+                <StackPanel>
+                    <Border BorderBrush="{DynamicResource AccentColorBrush}" BorderThickness="0,0,0,1" Background="{DynamicResource AccentColorBrush}">
+                        <TextBlock HorizontalAlignment="Center" FontSize="20" Text="Script Running Mode" Foreground="White"></TextBlock>
+                    </Border>
+
+                    <RadioButton x:Name="rb_Mode" Margin="5" Content="Sington" IsChecked="{Binding ElementName=tv_Scripts,Path=SelectedItem.IsSingtonMode}" IsThreeState="False" GroupName="1"/>
+                    <RadioButton Margin="5" Content="Parallel" IsChecked="{Binding ElementName=rb_Mode,Path=IsChecked,Converter={StaticResource BooleanReverseConverter},Mode=OneWay}" IsThreeState="False" GroupName="1"/>
+                </StackPanel>
             </Controls:MetroTabItem>
         </Controls:MetroAnimatedSingleRowTabControl>
     </Grid>

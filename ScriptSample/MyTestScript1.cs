@@ -11,6 +11,7 @@ namespace ScriptSample
     
     public class Script1Data
     {
+        [Parameter(Direction = Direction.Output)]
         public int Id { get; set; }
 
         public string UserName { get; set; }
@@ -19,30 +20,53 @@ namespace ScriptSample
     [Script("Test Case1")]
     public class MyTestScript1 : IScriptRunner<Script1Data>
     {
-        public Script1Data GetSampleData()
-        {
-            throw new NotImplementedException();
-        }
+        private Script1Data _myData;
 
-        public void SetInputData(Script1Data data, IProgress<ProcessInfo> MyProgress)
+        private IProgress<ProgressInfo> _progress;
+
+        public void SetInputData(Script1Data data, IProgress<ProgressInfo> MyProgress)
         {
-            
+            _progress = MyProgress;
+            _myData = data;
         }
 
         [Step(Id =1,Name ="Test Step1")]
         public void Step1()
         {
+            _progress.Report(new ProgressInfo("Waiting for 5 seconds"));
             Task.Delay(5000).Wait();
         }
 
         [Step(Id =2,Name ="Test Step2")]
         public void Step2()
         {
-
+            for(int i = 1;i<100;i++)
+            {
+                Task.Delay(10).Wait();
+                _progress.Report(new ProgressInfo(i,100, $"Hello {i}"));
+            }
         }
 
         [Step(Id =3,Name ="Test Step3")]
         public void Step3()
-        { }
+        {
+            for (int i = 1; i < 100; i++)
+            {
+                Task.Delay(25).Wait();
+                _progress.Report(new ProgressInfo(i,100,""));
+            }
+
+            _myData.UserName = "alsdje";
+            Random rd = new Random();
+            _myData.Id = rd.Next(1000);
+        }
+
+        public Script1Data GetResult()
+        {
+            _myData.UserName = "alsdje";
+            Random rd = new Random();
+            _myData.Id = rd.Next(1000);
+            return _myData;
+        }
     }
 }

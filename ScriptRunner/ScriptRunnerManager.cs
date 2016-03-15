@@ -15,15 +15,17 @@ namespace ScriptRunner
         {
             ScriptFolders = new ObservableCollection<ScriptFolder>();
             Scripts = new ObservableCollection<Script>();
-            ScriptTasks = new List<ScriptTask>();
+            Robots = new List<Robot>();
         }
 
         public static ObservableCollection<Script> Scripts = null;
 
         public static ObservableCollection<ScriptFolder> ScriptFolders = null;
 
-        public static List<ScriptTask> ScriptTasks = null;
+        public static List<Robot> Robots = null;
 
         public static Script CurrentScript { get; set; }
+
+        public static string RobotCount { get; set; }
     }
 }

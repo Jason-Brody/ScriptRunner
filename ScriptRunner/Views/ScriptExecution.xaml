@@ -7,54 +7,102 @@
              xmlns:cv="clr-namespace:ScriptRunner.Converters"
              xmlns:Controls="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
              xmlns:metro="clr-namespace:MahApps.Metro;assembly=MahApps.Metro"
+             xmlns:root="clr-namespace:ScriptRunner"
              mc:Ignorable="d" 
+             x:Name="uc_This"
              d:DesignHeight="300" d:DesignWidth="300">
     <Grid>
         <Grid.Resources>
-            <cv:DataTypeConverter x:Key="DataTypeConverter"/>
+            
         </Grid.Resources>
         <Grid.RowDefinitions>
-            <RowDefinition Height="2*"/>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
-        <Grid>
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="*"/>
-                <ColumnDefinition Width="Auto"/>
-                <ColumnDefinition Width="*"/>
-            </Grid.ColumnDefinitions>
-            <ListView x:Name="lv_Scripts" ItemsSource="{Binding}" SelectionChanged="lv_Scripts_SelectionChanged">
-                <ListView.View>
-                    <GridView>
-                        <GridViewColumn Header="Case Id"  DisplayMemberBinding="{Binding Id}"/>
-                        <GridViewColumn Header="Script Name" Width="150" DisplayMemberBinding="{Binding Name}"/>
-                    </GridView>
-                </ListView.View>
-            </ListView>
-            <GridSplitter Grid.Column="1" Width="3" HorizontalAlignment="Stretch" ResizeDirection="Columns" Background="{DynamicResource AccentColorBrush}"/>
-            <ListView x:Name="lv_Steps" Grid.Column="2" ItemsSource="{Binding ElementName=lv_Scripts,Path=SelectedItem.Steps}">
-                <ListView.View>
-                    <GridView>
-                        <GridViewColumn Header="Step Id" DisplayMemberBinding="{Binding Id}"/>
-                        <GridViewColumn Header="Step Name" DisplayMemberBinding="{Binding Name}"/>
-                    </GridView>
-                </ListView.View>
-            </ListView>
+        <DockPanel>
+            <WrapPanel DockPanel.Dock="Top" Orientation="Horizontal">
+                <WrapPanel.Resources>
+                    <Style TargetType="Button" BasedOn="{StaticResource {x:Type Button}}">
+                        <Setter Property="Width" Value="50"/>
+                        <Setter Property="FontSize" Value="12"/>
+                    </Style>
+                </WrapPanel.Resources>
+                <Button Content="Run" x:Name="btn_Run" Click="btn_Run_Click"/>
+                <Button Content="Pause"/>
+                <Button Content="Stop"/>
+                <Controls:NumericUpDown x:Name="nud_Count" Width="100" Minimum="1" Maximum="5" Value="1"/>
+            </WrapPanel>
+           
+        </DockPanel>
+        <Grid Grid.Row="1">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="2*"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+                <ListView x:Name="lv_Scripts" ItemsSource="{Binding}" SelectionChanged="lv_Scripts_SelectionChanged">
+                    <ListView.View>
+                        <GridView>
+                            <GridViewColumn Header="Case Id"  DisplayMemberBinding="{Binding Id}"/>
+                            <GridViewColumn Header="Script Name" Width="150" DisplayMemberBinding="{Binding Name}"/>
+                        </GridView>
+                    </ListView.View>
+                </ListView>
+                <GridSplitter Grid.Column="1" Width="3" HorizontalAlignment="Stretch" ResizeDirection="Columns" Background="{DynamicResource AccentColorBrush}"/>
+                <ListView x:Name="lv_Steps" Grid.Column="2" ItemsSource="{Binding ElementName=lv_Scripts,Path=SelectedItem.Steps}" >
+                    <ListView.Resources>
+                        <Style TargetType="ListViewItem" BasedOn="{StaticResource {x:Type ListViewItem}}">
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding IsRunning}" Value="True">
+                                    <Setter Property="Background" Value="#FF00B050"/>
+                                    <Setter Property="Foreground" Value="White"/>
+                                    <Setter Property="IsSelected" Value="True"/>
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </ListView.Resources>
+                    <ListView.View>
+                        <GridView>
+                            <GridViewColumn Header="Step Id" DisplayMemberBinding="{Binding Id}"/>
+                            <GridViewColumn Header="Step Name" DisplayMemberBinding="{Binding Name}"/>
+                            <GridViewColumn Header="Status">
+                                <GridViewColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <CheckBox IsChecked="{Binding IsComplete}" IsEnabled="False"/>
+                                    </DataTemplate>
+                                </GridViewColumn.CellTemplate>
+                            </GridViewColumn>
+                        </GridView>
+                    </ListView.View>
+                </ListView>
+            </Grid>
+            <GridSplitter Grid.Row="1"  Height="3" HorizontalAlignment="Stretch" Background="{DynamicResource AccentColorBrush}"/>
+
+
+
+            <DataGrid Grid.Row="2" x:Name="dg_Data" AutoGeneratingColumn="dg_Data_AutoGeneratingColumn" CanUserSortColumns="False"
+                      SelectionChanged="dg_Data_SelectionChanged"
+                      ItemsSource="{Binding ElementName=lv_Scripts,Path=SelectedItem.Datas,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" >
+                <DataGrid.Style>
+                    <Style BasedOn="{StaticResource MetroDataGrid}" TargetType="{x:Type DataGrid}">
+                        <Setter Property="AlternatingRowBackground" Value="{DynamicResource GrayBrush10}" />
+                    </Style>
+                </DataGrid.Style>
+            </DataGrid>
+
+            <ProgressBar Grid.Row="3" DataContext="{Binding ElementName=lv_Steps,Path=SelectedItem}" 
+                         Foreground="{DynamicResource AccentColorBrush}"
+                                      IsIndeterminate="{Binding StepProgress.IsIndeterMine}"
+                                      Value="{Binding StepProgress.Current}"
+                                      Maximum="{Binding StepProgress.Total}"
+                                     Width="{Binding ElementName=uc_This,Path=ActualWidth}"/>
         </Grid>
-        <GridSplitter Grid.Row="1"  Height="3" HorizontalAlignment="Stretch" Background="{DynamicResource AccentColorBrush}"/>
-        
-        
-        
-        <DataGrid Grid.Row="2" x:Name="dg_Data" ItemsSource="{Binding ElementName=lv_Scripts,Path=SelectedItem.Datas}" AutoGeneratingColumn="dg_Data_AutoGeneratingColumn">
-            <DataGrid.Style>
-                <Style BasedOn="{StaticResource MetroDataGrid}" TargetType="{x:Type DataGrid}">
-                    <Setter Property="AlternatingRowBackground" Value="{DynamicResource GrayBrush10}" />
-                </Style>
-            </DataGrid.Style>
-            
-            
-            
-        </DataGrid>
     </Grid>
 </UserControl>

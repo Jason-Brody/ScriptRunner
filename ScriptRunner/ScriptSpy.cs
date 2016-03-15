@@ -8,6 +8,7 @@ using System.Reflection;
 using ScriptRunner.Interface;
 using System.IO;
 using ScriptRunner.Interface.Attributes;
+using ScriptRunner.Models;
 
 namespace ScriptRunner
 {

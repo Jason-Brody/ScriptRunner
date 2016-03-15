@@ -8,7 +8,7 @@ namespace ScriptRunner.Interface
 {
     public interface IScriptRunner<T>  where T :class,new()
     {
-        void SetInputData(T data, IProgress<ProcessInfo> MyProgress);
+        void SetInputData(T data, IProgress<ProgressInfo> MyProgress);
     }
 
     public interface IScriptData<T>:IScriptRunner<T> where T :class,new()

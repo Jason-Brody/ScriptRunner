@@ -40,12 +40,12 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Attributes\ParameterDirectionAttribute.cs" />
+    <Compile Include="Attributes\ParameterAttribute.cs" />
     <Compile Include="Attributes\ScriptAttribute.cs" />
     <Compile Include="Attributes\StepAttribute.cs" />
     <Compile Include="IScriptClient.cs" />
     <Compile Include="ScriptEngine.cs" />
-    <Compile Include="ProcessInfo.cs" />
+    <Compile Include="ProgressInfo.cs" />
     <Compile Include="ScriptTaskInfo.cs" />
     <Compile Include="Utils\TcpPort.cs" />
     <Compile Include="WPFNotify.cs" />

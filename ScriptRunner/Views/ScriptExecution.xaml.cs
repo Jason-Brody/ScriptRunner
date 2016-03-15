@@ -53,5 +53,16 @@ namespace ScriptRunner.Views
             ScriptRunnerManager.CurrentScript = lv_Scripts.SelectedItem as Script;
             (Application.Current.MainWindow as MainWindow).sbi_Current.DataContext = ScriptRunnerManager.CurrentScript;
         }
+
+        private void btn_Run_Click(object sender, RoutedEventArgs e)
+        {
+            MessageBox.Show(ScriptRunnerManager.RobotCount);
+        }
+
+        private void dg_Data_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            e.Handled = true;
+            var index = ((DataGrid)sender).SelectedIndex;
+        }
     }
 }
