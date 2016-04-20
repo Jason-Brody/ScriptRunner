@@ -18,22 +18,19 @@ namespace ScriptSample
     }
 
     [Script("Test Case1")]
-    public class MyTestScript1 : IScriptRunner<Script1Data>
+    public class MyTestScript1 : ScriptBase<Script1Data>
     {
         private Script1Data _myData;
 
-        private IProgress<ProgressInfo> _progress;
-
-        public void SetInputData(Script1Data data, IProgress<ProgressInfo> MyProgress)
-        {
-            _progress = MyProgress;
+        public override void SetInputData(Script1Data data) {
             _myData = data;
         }
 
         [Step(Id =1,Name ="Test Step1")]
         public void Step1()
         {
-            _progress.Report(new ProgressInfo("Waiting for 5 seconds"));
+            
+            _stepReporter.Report(new ProgressInfo("Waiting for 5 seconds"));
             Task.Delay(5000).Wait();
         }
 
@@ -43,7 +40,7 @@ namespace ScriptSample
             for(int i = 1;i<100;i++)
             {
                 Task.Delay(10).Wait();
-                _progress.Report(new ProgressInfo(i,100, $"Hello {i}"));
+                _stepReporter.Report(new ProgressInfo(i,100, $"Hello {i}"));
             }
         }
 
@@ -53,7 +50,7 @@ namespace ScriptSample
             for (int i = 1; i < 100; i++)
             {
                 Task.Delay(25).Wait();
-                _progress.Report(new ProgressInfo(i,100,""));
+                _stepReporter.Report(new ProgressInfo(i,100,""));
             }
 
             _myData.UserName = "alsdje";
@@ -68,5 +65,7 @@ namespace ScriptSample
             _myData.Id = rd.Next(1000);
             return _myData;
         }
+
+      
     }
 }

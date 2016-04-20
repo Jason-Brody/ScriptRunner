@@ -49,7 +49,7 @@
     <Compile Include="ScriptTaskInfo.cs" />
     <Compile Include="Utils\TcpPort.cs" />
     <Compile Include="WPFNotify.cs" />
-    <Compile Include="IScriptRunner.cs" />
+    <Compile Include="ScriptBase.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

@@ -12,114 +12,91 @@ namespace ScriptRunner.Interface
     public delegate void BeforeStepExecutionHandler(StepAttribute step);
     public delegate void AfterStepExecutionHandler(StepAttribute step);
 
-    public interface IScriptEngine<T> 
+    public interface IScriptEngine<TScript,TScriptModel,TStepProgress> where TScript:ScriptBase<TScriptModel, TStepProgress>
     {
         event BeforeStepExecutionHandler BeforeStepExecution;
         event AfterStepExecutionHandler AfterStepExecution;
 
-        void Run(object data);
+        void Run(TScriptModel data);
 
-        void Run(object data, int StepNum);
-
-        Progress<T> StepProgress { get; }
+        Progress<TStepProgress> StepProgress { get; }
     }
 
-    public interface IScriptEngine: IScriptEngine<ProgressInfo>
+    public class ScriptEngine<TScript,TScriptModel>:ScriptEngine<TScript,TScriptModel,ProgressInfo> where TScript: ScriptBase<TScriptModel,ProgressInfo>,new()
     {
-
+        
     }
 
-    public class ScriptEngine<T> : ScriptEngine<T, ProgressInfo> where T : class, new()
-    {
-        public ScriptEngine(IScriptRunner<T, ProgressInfo> obj) : base(obj)
-        {
-        }
-    }
 
-    public class ScriptEngine<T,T1>: IScriptEngine<T1> where T :class,new()
+    public class ScriptEngine<TScript,TScriptModel,TStepProgress>:IScriptEngine<TScript,TScriptModel,TStepProgress> where TScript: ScriptBase<TScriptModel,TStepProgress>,new()
     {
         public event BeforeStepExecutionHandler BeforeStepExecution;
         public event AfterStepExecutionHandler AfterStepExecution;
 
         private Dictionary<int, Tuple<StepAttribute, MethodInfo>> _stepDic;
 
-        private IScriptRunner<T,T1> _obj = null;
 
-        public ScriptEngine(IScriptRunner<T,T1> obj)
-        {
-            this._obj = obj;
+        private ScriptBase<TScriptModel,TStepProgress> _obj = null;
+
+        public ScriptEngine() {
+            this._obj = new TScript();
         }
 
-        public Progress<T1> StepProgress { get; } = new Progress<T1>();
+        public ScriptEngine(ScriptBase<TScriptModel, TStepProgress> Script) {
+            this._obj = Script;
+        }  
+        
+
+        public Progress<TStepProgress> StepProgress { get; } = new Progress<TStepProgress>();
 
        
 
-        private void beforeStepExecution(StepAttribute step)
-        {
-            if (BeforeStepExecution != null)
-                BeforeStepExecution(step);
+
+        public void Run(object data) {
+            Run((TScriptModel)data);
         }
 
-        private void afterStepExecution(StepAttribute step)
-        {
-            if (AfterStepExecution != null)
-                AfterStepExecution(step);
+        public void Run(object data, int StepNum) {
+            Run((TScriptModel)data, StepNum);
         }
 
-        public void Run(T data)
-        {
+        public void Run(TScriptModel data) {
             if (_stepDic == null)
                 addMethod();
+            _obj.SetInputData(data);
+            _obj.SetStepReport(StepProgress);
 
-            
-            _obj.SetInputData(data, StepProgress);
-
-
-            foreach (var item in _stepDic.OrderBy(o => o.Key))
-            {
-                beforeStepExecution(item.Value.Item1);
+            foreach (var item in _stepDic.OrderBy(o => o.Key)) {
+                BeforeStepExecution?.Invoke(item.Value.Item1);
                 item.Value.Item2.Invoke(_obj, null);
-                afterStepExecution(item.Value.Item1);
+                AfterStepExecution?.Invoke(item.Value.Item1);
             }
         }
 
+        //public void Run(TScriptModel data, int stepNum) {
+        //    if (_stepDic == null)
+        //        addMethod();
 
+        //    _obj.SetInputData(data);
+        //    _obj.SetStepReport(StepProgress);
 
-        public void Run(T data, int stepNum)
-        {
-            if (_stepDic == null)
-                addMethod();
+        //    BeforeStepExecution?.Invoke(_stepDic[stepNum].Item1);
+        //    _stepDic[stepNum].Item2.Invoke(_obj, null);
+        //    AfterStepExecution?.Invoke(_stepDic[stepNum].Item1);
+        //}
 
-            _obj.SetInputData(data, StepProgress);
-
-            beforeStepExecution(_stepDic[stepNum].Item1);
-            _stepDic[stepNum].Item2.Invoke(_obj, null);
-            afterStepExecution(_stepDic[stepNum].Item1);
-        }
-
-        private void addMethod()
-        {
+        private void addMethod() {
             _stepDic = new Dictionary<int, Tuple<StepAttribute, MethodInfo>>();
-           
+
             var methods = _obj.GetType().GetMethods();
-            foreach (var method in _obj.GetType().GetMethods().Where(m => m.IsPublic))
-            {
+            foreach (var method in _obj.GetType().GetMethods().Where(m => m.IsPublic)) {
                 var stepAttr = method.GetCustomAttribute<StepAttribute>(true);
-                if (stepAttr != null && method.GetParameters().Count()==0)
-                {
+                if (stepAttr != null && method.GetParameters().Count() == 0) {
                     _stepDic.Add(stepAttr.Id, new Tuple<StepAttribute, MethodInfo>(stepAttr, method));
                 }
             }
         }
 
-        public void Run(object data)
-        {
-            Run(data as T);
-        }
-
-        public void Run(object data, int StepNum)
-        {
-            Run(data as T, StepNum);
-        }
+       
     }
 }

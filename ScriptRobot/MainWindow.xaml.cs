@@ -72,7 +72,6 @@ namespace ScriptRobot
                 return worker.Run(beforeStep, afterStep, detailProgress);
             });
 
-            //await Task.Delay(5000);
             await proxy.Invoke("Complete",JsonConvert.SerializeObject(result));
             this.Dispatcher.Invoke(() =>
             {
@@ -87,6 +86,7 @@ namespace ScriptRobot
             {
                 rtb_Message.AppendText($"Current Running step:{step.Name} \r");
             });
+            
             proxy.Invoke("BeforeStep", step.Id);
         }
 

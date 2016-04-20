@@ -16,6 +16,13 @@ namespace ReflectionTest
     {
         static void Main(string[] args)
         {
+            var tp = typeof(ScriptSample.MyTestScript1);
+            Console.WriteLine(tp.IsSubclassOf(typeof(ScriptRunner.Interface.ScriptBase<ScriptSample.Script1Data>)));
+            var tp1 = tp.BaseType;
+            Console.WriteLine(tp.IsSubclassOf(typeof(ScriptRunner.Interface.ScriptBase<>)));
+            Console.WriteLine(tp1.GetGenericTypeDefinition() == typeof(ScriptRunner.Interface.ScriptBase<>).GetGenericTypeDefinition());
+            Console.WriteLine(tp1.IsSubclassOf(typeof(ScriptRunner.Interface.ScriptBase<>)));
+
             HttpClient client = new HttpClient();
 
             client.BaseAddress =  new Uri("http://sh.lianjia.com/ershoufang");

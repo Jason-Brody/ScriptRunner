@@ -19,27 +19,22 @@ namespace ScriptSample
     }
 
     [Script("Test Case2")]
-    public class MyTestScript2 : IScriptRunner<Script2Data>
+    public class MyTestScript2 : ScriptBase<Script2Data>
     {
-        public Script2Data GetResult()
-        {
-            throw new NotImplementedException();
+       
+
+       
+
+        public override void SetInputData(Script2Data data) {
+            
         }
 
-        public Script2Data GetSampleData()
-        {
-            return new Script2Data() { AccountList = "abc", Id = 1, UserName = "Zhou Yang" };
-        }
-
-        public void SetInputData(Script2Data data, IProgress<ProgressInfo> MyProgress)
-        {
-
-        }
+       
 
         [Step(Id = 1, Name = "Test Step1")]
         public void Step1()
         {
-
+           
         }
 
         [Step(Id = 2, Name = "Test Step2")]

@@ -66,6 +66,10 @@
       <Project>{d2296d09-62d6-4d22-b702-950320e93dfb}</Project>
       <Name>ScriptRunner</Name>
     </ProjectReference>
+    <ProjectReference Include="..\ScriptSample\ScriptSample.csproj">
+      <Project>{0a83abfa-4b7c-4224-8815-479101e40a5f}</Project>
+      <Name>ScriptSample</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

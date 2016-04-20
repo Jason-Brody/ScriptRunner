@@ -65,7 +65,7 @@ namespace ReflectionTest
             var existedAssemblies = AppDomain.CurrentDomain.GetAssemblies();
             foreach (var t in asm.GetTypes().Where(t => t.IsClass))
             {
-                var myInterface = t.GetInterfaces().Where(x => x.IsGenericType && x.GetGenericTypeDefinition() == typeof(IScriptRunner<>)).FirstOrDefault();
+                var myInterface = t.GetInterfaces().Where(x => x.IsGenericType && x.GetGenericTypeDefinition() == typeof(ScriptBase<>)).FirstOrDefault();
                 if (myInterface != null)
                 {
                     if (t.GetConstructor(Type.EmptyTypes) != null)
