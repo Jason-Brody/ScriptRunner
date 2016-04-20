@@ -49,7 +49,7 @@ namespace ScriptRobot
                 Type engineType = typeof(ScriptEngine<>).MakeGenericType(new Type[] { dataType });
                 var engineInstance = Activator.CreateInstance(engineType, new object[] { targetInstance }) as IScriptEngine;
 
-                engineInstance.MyProgress.ProgressChanged += (s, e) => { DetailProgress(e); };
+                engineInstance.StepProgress.ProgressChanged += (s, e) => { DetailProgress(e); };
                 engineInstance.BeforeStepExecution += (s) => { runningStep(s); };
                 engineInstance.AfterStepExecution += (s) => { completeStep(s); };
                 engineInstance.Run(item.Value);

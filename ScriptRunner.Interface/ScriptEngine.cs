@@ -12,7 +12,7 @@ namespace ScriptRunner.Interface
     public delegate void BeforeStepExecutionHandler(StepAttribute step);
     public delegate void AfterStepExecutionHandler(StepAttribute step);
 
-    public interface IScriptEngine
+    public interface IScriptEngine<T> 
     {
         event BeforeStepExecutionHandler BeforeStepExecution;
         event AfterStepExecutionHandler AfterStepExecution;
@@ -21,25 +21,38 @@ namespace ScriptRunner.Interface
 
         void Run(object data, int StepNum);
 
-        Progress<ProgressInfo> MyProgress { get; }
+        Progress<T> StepProgress { get; }
     }
 
-    
-    public class ScriptEngine<T>: IScriptEngine where T :class,new()
+    public interface IScriptEngine: IScriptEngine<ProgressInfo>
+    {
+
+    }
+
+    public class ScriptEngine<T> : ScriptEngine<T, ProgressInfo> where T : class, new()
+    {
+        public ScriptEngine(IScriptRunner<T, ProgressInfo> obj) : base(obj)
+        {
+        }
+    }
+
+    public class ScriptEngine<T,T1>: IScriptEngine<T1> where T :class,new()
     {
         public event BeforeStepExecutionHandler BeforeStepExecution;
         public event AfterStepExecutionHandler AfterStepExecution;
 
         private Dictionary<int, Tuple<StepAttribute, MethodInfo>> _stepDic;
 
-        private IScriptRunner<T> _obj = null;
+        private IScriptRunner<T,T1> _obj = null;
 
-        public ScriptEngine(IScriptRunner<T> obj)
+        public ScriptEngine(IScriptRunner<T,T1> obj)
         {
             this._obj = obj;
         }
 
-        public Progress<ProgressInfo> MyProgress { get; } = new Progress<ProgressInfo>();
+        public Progress<T1> StepProgress { get; } = new Progress<T1>();
+
+       
 
         private void beforeStepExecution(StepAttribute step)
         {
@@ -59,7 +72,7 @@ namespace ScriptRunner.Interface
                 addMethod();
 
             
-            _obj.SetInputData(data, MyProgress);
+            _obj.SetInputData(data, StepProgress);
 
 
             foreach (var item in _stepDic.OrderBy(o => o.Key))
@@ -77,7 +90,7 @@ namespace ScriptRunner.Interface
             if (_stepDic == null)
                 addMethod();
 
-            _obj.SetInputData(data, new Progress<ProgressInfo>());
+            _obj.SetInputData(data, StepProgress);
 
             beforeStepExecution(_stepDic[stepNum].Item1);
             _stepDic[stepNum].Item2.Invoke(_obj, null);
