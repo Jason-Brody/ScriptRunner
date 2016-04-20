@@ -21,7 +21,7 @@ namespace ScriptRunner.Interface
 
     public abstract class ScriptBase<TScriptModel>:ScriptBase<TScriptModel,ProgressInfo>
     {
-
+        
     }
 
 
