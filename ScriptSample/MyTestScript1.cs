@@ -20,11 +20,7 @@ namespace ScriptSample
     [Script("Test Case1")]
     public class MyTestScript1 : ScriptBase<Script1Data>
     {
-        private Script1Data _myData;
-
-        public override void SetInputData(Script1Data data) {
-            _myData = data;
-        }
+        
 
         [Step(Id =1,Name ="Test Step1")]
         public void Step1()
@@ -53,17 +49,17 @@ namespace ScriptSample
                 _stepReporter.Report(new ProgressInfo(i,100,""));
             }
 
-            _myData.UserName = "alsdje";
+            _data.UserName = "alsdje";
             Random rd = new Random();
-            _myData.Id = rd.Next(1000);
+            _data.Id = rd.Next(1000);
         }
 
         public Script1Data GetResult()
         {
-            _myData.UserName = "alsdje";
+            _data.UserName = "alsdje";
             Random rd = new Random();
-            _myData.Id = rd.Next(1000);
-            return _myData;
+            _data.Id = rd.Next(1000);
+            return _data;
         }
 
       

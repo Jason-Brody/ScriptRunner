@@ -11,12 +11,23 @@ namespace ScriptRunner.Interface
 
     public delegate void BeforeStepExecutionHandler(StepAttribute step);
     public delegate void AfterStepExecutionHandler(StepAttribute step);
+    public delegate void OnScriptFinishedHandler();
 
-    public interface IScriptEngine<TScript,TScriptModel,TStepProgress> where TScript:ScriptBase<TScriptModel, TStepProgress>
+
+    public interface IStepProcess
     {
         event BeforeStepExecutionHandler BeforeStepExecution;
         event AfterStepExecutionHandler AfterStepExecution;
+        event OnScriptFinishedHandler Completed;
+    }
 
+    public interface IScriptEngine:IStepProcess
+    {
+        void Run(object data);
+    }
+
+    public interface IScriptEngine<TScript,TScriptModel,TStepProgress>:IScriptEngine where TScript:ScriptBase<TScriptModel, TStepProgress>
+    {
         void Run(TScriptModel data);
 
         Progress<TStepProgress> StepProgress { get; }
@@ -32,6 +43,7 @@ namespace ScriptRunner.Interface
     {
         public event BeforeStepExecutionHandler BeforeStepExecution;
         public event AfterStepExecutionHandler AfterStepExecution;
+        public event OnScriptFinishedHandler Completed;
 
         private Dictionary<int, Tuple<StepAttribute, MethodInfo>> _stepDic;
 
@@ -49,16 +61,12 @@ namespace ScriptRunner.Interface
 
         public Progress<TStepProgress> StepProgress { get; } = new Progress<TStepProgress>();
 
-       
 
 
         public void Run(object data) {
             Run((TScriptModel)data);
         }
 
-        public void Run(object data, int StepNum) {
-            Run((TScriptModel)data, StepNum);
-        }
 
         public void Run(TScriptModel data) {
             if (_stepDic == null)
@@ -68,9 +76,15 @@ namespace ScriptRunner.Interface
 
             foreach (var item in _stepDic.OrderBy(o => o.Key)) {
                 BeforeStepExecution?.Invoke(item.Value.Item1);
-                item.Value.Item2.Invoke(_obj, null);
+                try {
+                    item.Value.Item2.Invoke(_obj, null);
+                }
+                catch (TargetInvocationException ex) {
+                    throw ex.InnerException;
+                }
                 AfterStepExecution?.Invoke(item.Value.Item1);
             }
+            Completed?.Invoke();
         }
 
         //public void Run(TScriptModel data, int stepNum) {
@@ -99,4 +113,8 @@ namespace ScriptRunner.Interface
 
        
     }
+
+
+    
+
 }

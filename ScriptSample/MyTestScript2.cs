@@ -22,15 +22,6 @@ namespace ScriptSample
     public class MyTestScript2 : ScriptBase<Script2Data>
     {
        
-
-       
-
-        public override void SetInputData(Script2Data data) {
-            
-        }
-
-       
-
         [Step(Id = 1, Name = "Test Step1")]
         public void Step1()
         {
