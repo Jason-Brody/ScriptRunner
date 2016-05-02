@@ -23,12 +23,12 @@ namespace ScriptRunner.Interface
 
     public interface IScriptEngine:IStepProcess
     {
-        void Run(object data);
+        string Run(object data);
     }
 
     public interface IScriptEngine<TScript,TScriptModel,TStepProgress>:IScriptEngine where TScript:ScriptBase<TScriptModel, TStepProgress>
     {
-        void Run(TScriptModel data);
+        string Run(TScriptModel data);
 
         Progress<TStepProgress> StepProgress { get; }
     }
@@ -63,15 +63,16 @@ namespace ScriptRunner.Interface
 
 
 
-        public void Run(object data) {
-            Run((TScriptModel)data);
+        public string Run(object data) {
+            return Run((TScriptModel)data);
         }
 
 
-        public void Run(TScriptModel data) {
+        public string Run(TScriptModel data) {
             if (_stepDic == null)
                 addMethod();
             _obj.SetInputData(data);
+            _obj.Initial();
             _obj.SetStepReport(StepProgress);
 
             foreach (var item in _stepDic.OrderBy(o => o.Key)) {
@@ -79,12 +80,16 @@ namespace ScriptRunner.Interface
                 try {
                     item.Value.Item2.Invoke(_obj, null);
                 }
+               
                 catch (TargetInvocationException ex) {
+                    if (ex.InnerException is BreakException)
+                        return ex.Message;
                     throw ex.InnerException;
                 }
                 AfterStepExecution?.Invoke(item.Value.Item1);
             }
             Completed?.Invoke();
+            return null;
         }
 
         //public void Run(TScriptModel data, int stepNum) {
@@ -112,6 +117,13 @@ namespace ScriptRunner.Interface
         }
 
        
+    }
+
+    public sealed class BreakException : Exception
+    {
+        public BreakException(string Msg) : base(Msg) {
+
+        }
     }
 
 

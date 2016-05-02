@@ -47,8 +47,6 @@ namespace ScriptRunner.Views
                     await Task.Run(() => { folder.FindScripts(); });
                     ScriptRunnerManager.ScriptFolders.Add(folder);
                 }
-
-                
             }
         }
 

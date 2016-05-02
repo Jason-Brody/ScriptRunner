@@ -19,6 +19,10 @@ namespace ScriptRunner.Interface
         public void SetInputData(TScriptModel data) {
             this._data = data;
         }
+
+        public virtual void Initial() {
+
+        }
     }
 
     public abstract class ScriptBase<TScriptModel>:ScriptBase<TScriptModel,ProgressInfo>
