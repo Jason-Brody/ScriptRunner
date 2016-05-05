@@ -35,7 +35,8 @@ namespace ScriptRunner.Views
             //var result = await this.ShowInputAsync("Folder Info", "Please type folder address here");
             //if(result!=null)
             {
-                var result = @"E:\GitHub\ScriptRunner\ScriptRunner\ScriptSample\bin\Debug";
+                var result = @"E:\GitHub\ATT\ATT.Scripts\bin\Debug";
+                //var result = @"E:\GitHub\ScriptRunner\ScriptRunner\ScriptSample\bin\Debug";
 
                 if (ScriptRunnerManager.ScriptFolders.Where(f => f.Name.ToLower().Trim() == result.ToLower().Trim()).FirstOrDefault() != null)
                 {

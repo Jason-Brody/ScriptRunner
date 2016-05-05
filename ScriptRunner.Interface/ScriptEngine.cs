@@ -67,10 +67,15 @@ namespace ScriptRunner.Interface
             return Run((TScriptModel)data);
         }
 
-
+       
         public string Run(TScriptModel data) {
+            return Run(data, null);
+        }
+       
+
+        public string Run(TScriptModel data,int? stepId = null) {
             if (_stepDic == null)
-                addMethod();
+                addMethod(stepId);
             _obj.SetInputData(data);
             _obj.Initial();
             _obj.SetStepReport(StepProgress);
@@ -104,14 +109,21 @@ namespace ScriptRunner.Interface
         //    AfterStepExecution?.Invoke(_stepDic[stepNum].Item1);
         //}
 
-        private void addMethod() {
+        private void addMethod(int? stepId = null) {
             _stepDic = new Dictionary<int, Tuple<StepAttribute, MethodInfo>>();
 
             var methods = _obj.GetType().GetMethods();
             foreach (var method in _obj.GetType().GetMethods().Where(m => m.IsPublic)) {
                 var stepAttr = method.GetCustomAttribute<StepAttribute>(true);
                 if (stepAttr != null && method.GetParameters().Count() == 0) {
-                    _stepDic.Add(stepAttr.Id, new Tuple<StepAttribute, MethodInfo>(stepAttr, method));
+                    if(stepId == null) {
+                        _stepDic.Add(stepAttr.Id, new Tuple<StepAttribute, MethodInfo>(stepAttr, method));
+                    }else {
+                        if(stepAttr.Id >= stepId) {
+                            _stepDic.Add(stepAttr.Id, new Tuple<StepAttribute, MethodInfo>(stepAttr, method));
+                        }
+                    }
+                    
                 }
             }
         }
