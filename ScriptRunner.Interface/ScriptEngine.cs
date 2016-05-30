@@ -26,20 +26,32 @@ namespace ScriptRunner.Interface
         string Run(object data);
     }
 
-    public interface IScriptEngine<TScript,TScriptModel,TStepProgress>:IScriptEngine where TScript:ScriptBase<TScriptModel, TStepProgress>
+    public interface IScriptEngine<TScript,TScriptData,TCheckpoint,TStepProgress>:IScriptEngine 
+        where TScript:ScriptBase<TScriptData, TCheckpoint, TStepProgress> 
+        where TCheckpoint:class
     {
-        string Run(TScriptModel data);
+        string Run(TScriptData data);
 
         Progress<TStepProgress> StepProgress { get; }
     }
 
-    public class ScriptEngine<TScript,TScriptModel>:ScriptEngine<TScript,TScriptModel,ProgressInfo> where TScript: ScriptBase<TScriptModel,ProgressInfo>,new()
+    public class ScriptEngine<TScript,TScriptData>:ScriptEngine<TScript,TScriptData, Checkpoint>
+        where TScript : ScriptBase<TScriptData>, new()
+    {
+
+    }
+
+    public class ScriptEngine<TScript,TScriptData,TCheckpoint>:ScriptEngine<TScript, TScriptData, TCheckpoint, ProgressInfo> 
+        where TScript: ScriptBase<TScriptData,TCheckpoint,ProgressInfo>,new() 
+        where TCheckpoint:class
     {
         
     }
 
 
-    public class ScriptEngine<TScript,TScriptModel,TStepProgress>:IScriptEngine<TScript,TScriptModel,TStepProgress> where TScript: ScriptBase<TScriptModel,TStepProgress>,new()
+    public class ScriptEngine<TScript,TScriptData,TCheckpoint,TStepProgress>:IScriptEngine<TScript,TScriptData,TCheckpoint,TStepProgress> 
+        where TScript: ScriptBase<TScriptData,TCheckpoint,TStepProgress>,new() 
+        where TCheckpoint:class
     {
         public event BeforeStepExecutionHandler BeforeStepExecution;
         public event AfterStepExecutionHandler AfterStepExecution;
@@ -48,13 +60,13 @@ namespace ScriptRunner.Interface
         private Dictionary<int, Tuple<StepAttribute, MethodInfo>> _stepDic;
 
 
-        private ScriptBase<TScriptModel,TStepProgress> _obj = null;
+        private ScriptBase<TScriptData,TCheckpoint, TStepProgress> _obj = null;
 
         public ScriptEngine() {
             this._obj = new TScript();
         }
 
-        public ScriptEngine(ScriptBase<TScriptModel, TStepProgress> Script) {
+        public ScriptEngine(ScriptBase<TScriptData, TCheckpoint, TStepProgress> Script) {
             this._obj = Script;
         }  
         
@@ -64,35 +76,70 @@ namespace ScriptRunner.Interface
 
 
         public string Run(object data) {
-            return Run((TScriptModel)data);
+            return Run((TScriptData)data);
         }
 
        
-        public string Run(TScriptModel data) {
+        public string Run(TScriptData data) {
             return Run(data, null);
         }
        
 
-        public string Run(TScriptModel data,int? stepId = null) {
+        public string Run(TScriptData data,int? stepId = null) {
             if (_stepDic == null)
                 addMethod(stepId);
-            _obj.SetInputData(data);
-            _obj.Initial();
-            _obj.SetStepReport(StepProgress);
+            
+            _obj.Initial(data,StepProgress);
+           
 
-            foreach (var item in _stepDic.OrderBy(o => o.Key)) {
-                BeforeStepExecution?.Invoke(item.Value.Item1);
-                try {
-                    item.Value.Item2.Invoke(_obj, null);
+            var steps = _stepDic.OrderBy(o => o.Key).ToList();
+
+            int skipToStep = steps.First().Key;
+
+            for(int i = 0; i < steps.Count; i++) {
+                _obj.SetStepCheckPoint(steps[i].Value.Item1);
+                if (skipToStep == steps[i].Key) {
+                    BeforeStepExecution?.Invoke(steps[i].Value.Item1);
+                    try {
+                        steps[i].Value.Item2.Invoke(_obj, null);
+
+                        if (i < steps.Count-1)
+                            skipToStep = steps[i + 1].Key;
+
+                    }
+
+                    catch (TargetInvocationException ex) {
+                        if (ex.InnerException is BreakException)
+                            return (ex.InnerException as BreakException).Message;
+
+                        if (ex.InnerException is SkipException) {
+                            skipToStep = (ex.InnerException as SkipException).StepId;
+                            continue;
+                        }
+                            
+
+                        throw ex.InnerException;
+                    }
+                    AfterStepExecution?.Invoke(steps[i].Value.Item1);
                 }
-               
-                catch (TargetInvocationException ex) {
-                    if (ex.InnerException is BreakException)
-                        return ex.Message;
-                    throw ex.InnerException;
-                }
-                AfterStepExecution?.Invoke(item.Value.Item1);
+
+
+                
             }
+
+            //foreach (var item in _stepDic.OrderBy(o => o.Key)) {
+            //    BeforeStepExecution?.Invoke(item.Value.Item1);
+            //    try {
+            //        item.Value.Item2.Invoke(_obj, null);
+            //    }
+               
+            //    catch (TargetInvocationException ex) {
+            //        if (ex.InnerException is BreakException)
+            //            return ex.Message;
+            //        throw ex.InnerException;
+            //    }
+            //    AfterStepExecution?.Invoke(item.Value.Item1);
+            //}
             Completed?.Invoke();
             return null;
         }

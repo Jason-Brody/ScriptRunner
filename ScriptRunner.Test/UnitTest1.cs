@@ -5,6 +5,7 @@ using System.IO;
 using Newtonsoft.Json;
 using System.Collections;
 using System.Collections.Generic;
+using ScriptRunner.Interface;
 
 namespace ScriptRunner.Test
 {
@@ -15,10 +16,25 @@ namespace ScriptRunner.Test
         [TestMethod]
         public void FailDeleteAssembly()
         {
-            Assembly asm = Assembly.LoadFrom(asmFile);
-            Assert.IsTrue(asm != null);
-            dynamic obj = asm.CreateInstance("ScriptRunner.Interface.Test");
-            Assert.AreEqual("Hello:1", obj.GetValue("1"));
+
+
+           
+
+            Assert.AreEqual(a, b);
+            //Assembly asm = Assembly.LoadFrom(asmFile);
+            //Assert.IsTrue(asm != null);
+            //dynamic obj = asm.CreateInstance("ScriptRunner.Interface.Test");
+            
+            //Assert.AreEqual("Hello:1", obj.GetValue("1"));
+        }
+
+
+        [TestMethod]
+        public void ScriptTest() {
+            ScriptEngine<MyScript, ScriptData> script = new ScriptEngine<MyScript, ScriptData>();
+            ScriptData d = new ScriptData() { Data = "" };
+            var msg = script.Run(d);
+
         }
 
         [TestMethod]

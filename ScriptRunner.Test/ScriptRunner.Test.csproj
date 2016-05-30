@@ -55,16 +55,18 @@
     </Otherwise>
   </Choose>
   <ItemGroup>
+    <Compile Include="MyScript.cs" />
     <Compile Include="UnitTest1.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="ScriptRunner.Interface.dll">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
+    <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="packages.config" />
+    <ProjectReference Include="..\ScriptRunner.Interface\ScriptRunner.Interface.csproj">
+      <Project>{1cf5154b-6c97-4176-b725-0c0c2599c259}</Project>
+      <Name>ScriptRunner.Interface</Name>
+    </ProjectReference>
   </ItemGroup>
   <Choose>
     <When Condition="'$(VisualStudioVersion)' == '10.0' And '$(IsCodedUITest)' == 'True'">
