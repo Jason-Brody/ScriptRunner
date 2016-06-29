@@ -5,7 +5,7 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
-
+using System.Threading;
 namespace ScriptRunner.Interface
 {
 
@@ -26,7 +26,12 @@ namespace ScriptRunner.Interface
         string Run(object data);
     }
 
-    public interface IScriptEngine<TScript,TScriptData,TCheckpoint,TStepProgress>:IScriptEngine 
+    public interface IScriptEngine<TStepProgress> : IScriptEngine
+    {
+        Progress<TStepProgress> StepProgress { get; }
+    }
+
+    public interface IScriptEngine<TScript,TScriptData,TCheckpoint,TStepProgress>:IScriptEngine<TStepProgress> 
         where TScript:ScriptBase<TScriptData, TCheckpoint, TStepProgress> 
         where TCheckpoint:class
     {
@@ -49,6 +54,8 @@ namespace ScriptRunner.Interface
     }
 
 
+ 
+
     public class ScriptEngine<TScript,TScriptData,TCheckpoint,TStepProgress>:IScriptEngine<TScript,TScriptData,TCheckpoint,TStepProgress> 
         where TScript: ScriptBase<TScriptData,TCheckpoint,TStepProgress>,new() 
         where TCheckpoint:class
@@ -59,6 +66,7 @@ namespace ScriptRunner.Interface
 
         private Dictionary<int, Tuple<StepAttribute, MethodInfo>> _stepDic;
 
+        private CancellationTokenSource source = new CancellationTokenSource();
 
         private ScriptBase<TScriptData,TCheckpoint, TStepProgress> _obj = null;
 
@@ -79,6 +87,9 @@ namespace ScriptRunner.Interface
             return Run((TScriptData)data);
         }
 
+        public void Cancel() {
+            source.Cancel();
+        }
        
         public string Run(TScriptData data) {
             return Run(data, null);
@@ -164,7 +175,8 @@ namespace ScriptRunner.Interface
                 var stepAttr = method.GetCustomAttribute<StepAttribute>(true);
                 if (stepAttr != null && method.GetParameters().Count() == 0) {
                     if(stepId == null) {
-                        _stepDic.Add(stepAttr.Id, new Tuple<StepAttribute, MethodInfo>(stepAttr, method));
+                        var tempItem = new Tuple<StepAttribute, MethodInfo>(stepAttr, method);
+                        _stepDic.Add(stepAttr.Id, tempItem);
                     }else {
                         if(stepAttr.Id >= stepId) {
                             _stepDic.Add(stepAttr.Id, new Tuple<StepAttribute, MethodInfo>(stepAttr, method));

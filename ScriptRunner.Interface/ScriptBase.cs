@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace ScriptRunner.Interface
 {
-    public abstract class ScriptBase<TScriptData,TStepCheckpoint,TStepProgress> where TStepCheckpoint:class
+    public abstract class ScriptBase<TScriptData,TStepCheckpoint,TStepProgress>
     {
         protected IProgress<TStepProgress> _stepReporter;
 
@@ -40,7 +40,7 @@ namespace ScriptRunner.Interface
 
     }
 
-    public abstract class ScriptBase<TScriptData,TCheckpoint> :ScriptBase<TScriptData, TCheckpoint,ProgressInfo> where TCheckpoint:class
+    public abstract class ScriptBase<TScriptData,TCheckpoint> :ScriptBase<TScriptData, TCheckpoint,ProgressInfo>
     {
         
     }
@@ -78,7 +78,7 @@ namespace ScriptRunner.Interface
         }
     }
 
-    public class StepCheckpoint<T> where T:class
+    public class StepCheckpoint<T> 
     {
         private List<T> _checkPoints;
 
