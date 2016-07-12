@@ -49,10 +49,16 @@
     <Compile Include="Attributes\ParameterAttribute.cs" />
     <Compile Include="Attributes\ScriptAttribute.cs" />
     <Compile Include="Attributes\StepAttribute.cs" />
+    <Compile Include="Checkpoint.cs" />
+    <Compile Include="Exceptions\BreakException.cs" />
+    <Compile Include="Exceptions\SkipException.cs" />
     <Compile Include="IScriptClient.cs" />
+    <Compile Include="IScriptEngine.cs" />
+    <Compile Include="IStepProcess.cs" />
     <Compile Include="ScriptEngine.cs" />
     <Compile Include="ProgressInfo.cs" />
     <Compile Include="ScriptTaskInfo.cs" />
+    <Compile Include="StepCheckpoint.cs" />
     <Compile Include="Utils\TcpPort.cs" />
     <Compile Include="WPFNotify.cs" />
     <Compile Include="ScriptBase.cs" />

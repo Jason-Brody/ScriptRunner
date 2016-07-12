@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 14
-VisualStudioVersion = 14.0.24720.0
+VisualStudioVersion = 14.0.25123.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ScriptRunner", "ScriptRunner\ScriptRunner.csproj", "{D2296D09-62D6-4D22-B702-950320E93DFB}"
 EndProject
@@ -16,8 +16,6 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ScriptRobot", "ScriptRobot\ScriptRobot.csproj", "{9FCF5F78-49AF-4404-B726-A559A122A356}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ScriptSample", "ScriptSample\ScriptSample.csproj", "{0A83ABFA-4B7C-4224-8815-479101E40A5F}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LianJia", "LianJia\LianJia.csproj", "{46B54FCC-D5DF-4303-B707-74A0F6C24439}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -53,10 +51,6 @@ Global
 		{0A83ABFA-4B7C-4224-8815-479101E40A5F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{0A83ABFA-4B7C-4224-8815-479101E40A5F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{0A83ABFA-4B7C-4224-8815-479101E40A5F}.Release|Any CPU.Build.0 = Release|Any CPU
-		{46B54FCC-D5DF-4303-B707-74A0F6C24439}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{46B54FCC-D5DF-4303-B707-74A0F6C24439}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{46B54FCC-D5DF-4303-B707-74A0F6C24439}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{46B54FCC-D5DF-4303-B707-74A0F6C24439}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

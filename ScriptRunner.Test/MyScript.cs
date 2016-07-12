@@ -23,15 +23,14 @@ namespace ScriptRunner.Test
 
         [Step(Id =2)]
         public void Step2() {
-            
-            Return("Error Found");
-            SkipTo(5);
+            //Return("Error Found");
+            //SkipTo(5);
         }
 
         [Step(Id=3)]
         public void Step3() {
             _data.Data += "Step3";
-            
+            throw new Exception("Test Ex");
         }
 
         [Step(Id = 4)]

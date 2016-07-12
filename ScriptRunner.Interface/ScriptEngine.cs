@@ -6,56 +6,26 @@ using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using System.Threading;
+using ScriptRunner.Interface.Exceptions;
+
 namespace ScriptRunner.Interface
 {
 
     public delegate void BeforeStepExecutionHandler(StepAttribute step);
     public delegate void AfterStepExecutionHandler(StepAttribute step);
     public delegate void OnScriptFinishedHandler();
-
-
-    public interface IStepProcess
-    {
-        event BeforeStepExecutionHandler BeforeStepExecution;
-        event AfterStepExecutionHandler AfterStepExecution;
-        event OnScriptFinishedHandler Completed;
-    }
-
-    public interface IScriptEngine:IStepProcess
-    {
-        string Run(object data);
-    }
-
-    public interface IScriptEngine<TStepProgress> : IScriptEngine
-    {
-        Progress<TStepProgress> StepProgress { get; }
-    }
-
-    public interface IScriptEngine<TScript,TScriptData,TCheckpoint,TStepProgress>:IScriptEngine<TStepProgress> 
-        where TScript:ScriptBase<TScriptData, TCheckpoint, TStepProgress> 
-        where TCheckpoint:class
-    {
-        string Run(TScriptData data);
-
-        Progress<TStepProgress> StepProgress { get; }
-    }
-
+    public delegate void OnExecuteErrorHandler(object sender, StepAttribute step,Exception ex);
     public class ScriptEngine<TScript,TScriptData>:ScriptEngine<TScript,TScriptData, Checkpoint>
         where TScript : ScriptBase<TScriptData>, new()
     {
 
     }
-
     public class ScriptEngine<TScript,TScriptData,TCheckpoint>:ScriptEngine<TScript, TScriptData, TCheckpoint, ProgressInfo> 
         where TScript: ScriptBase<TScriptData,TCheckpoint,ProgressInfo>,new() 
         where TCheckpoint:class
     {
         
     }
-
-
- 
-
     public class ScriptEngine<TScript,TScriptData,TCheckpoint,TStepProgress>:IScriptEngine<TScript,TScriptData,TCheckpoint,TStepProgress> 
         where TScript: ScriptBase<TScriptData,TCheckpoint,TStepProgress>,new() 
         where TCheckpoint:class
@@ -63,6 +33,7 @@ namespace ScriptRunner.Interface
         public event BeforeStepExecutionHandler BeforeStepExecution;
         public event AfterStepExecutionHandler AfterStepExecution;
         public event OnScriptFinishedHandler Completed;
+        public event OnExecuteErrorHandler OnExecuteError;
 
         private Dictionary<int, Tuple<StepAttribute, MethodInfo>> _stepDic;
 
@@ -127,9 +98,9 @@ namespace ScriptRunner.Interface
                             skipToStep = (ex.InnerException as SkipException).StepId;
                             continue;
                         }
-                            
 
-                        throw ex.InnerException;
+                        OnExecuteError?.Invoke(_obj, steps[i].Value.Item1, ex.InnerException);
+                        return ex.InnerException?.Message;
                     }
                     AfterStepExecution?.Invoke(steps[i].Value.Item1);
                 }
@@ -189,15 +160,5 @@ namespace ScriptRunner.Interface
 
        
     }
-
-    public sealed class BreakException : Exception
-    {
-        public BreakException(string Msg) : base(Msg) {
-
-        }
-    }
-
-
-    
 
 }

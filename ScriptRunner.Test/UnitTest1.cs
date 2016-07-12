@@ -20,7 +20,7 @@ namespace ScriptRunner.Test
 
            
 
-            Assert.AreEqual(a, b);
+           
             //Assembly asm = Assembly.LoadFrom(asmFile);
             //Assert.IsTrue(asm != null);
             //dynamic obj = asm.CreateInstance("ScriptRunner.Interface.Test");
@@ -32,8 +32,12 @@ namespace ScriptRunner.Test
         [TestMethod]
         public void ScriptTest() {
             ScriptEngine<MyScript, ScriptData> script = new ScriptEngine<MyScript, ScriptData>();
+            script.OnExecuteError += (o, s, e) => {
+                Console.WriteLine(e.Message);
+            };
             ScriptData d = new ScriptData() { Data = "" };
             var msg = script.Run(d);
+
 
         }
 
